@@ -1,0 +1,89 @@
+<th:block th:fragment="gear-step2" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <a sec:authorize="isAuthenticated()" th:if="${group.status.ordinal() == 2 && user.isModerator()}" aria-expanded="false" class="dropdown-toggle caret-0" data-toggle="dropdown" href="#">
+        <i aria-hidden="true" class="fa fa-gear mr-1 gearIcon"></i>
+        <span class="sr-only" th:text="#{aria_label.gear}"></span>
+    </a>
+    <div sec:authorize="isAuthenticated()" class="dropdown-menu dropdown-menu-right border-1 font-weight-semibold dropdown-content wmin-md-225">
+        <div class="dropdown-content-header">
+            <!-- moderator menu strat -->
+            <ul class="no-dot pl-3 m-0">
+                <li th:if="${user.isModerator()}">
+                    <a tabindex="0" class="action-message" data-action="delete-message" data-target="#delete-message" data-toggle="modal" href="" th:data-message-id="${id_message}">
+                        <span th:text="#{topic_menu_modal.delete_contribution}">Delete this message</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</th:block>
+<th:block th:fragment="gear-step1" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <a sec:authorize="isAuthenticated()" th:if="${group.status.ordinal() == 1}" aria-expanded="false" class="dropdown-toggle caret-0" data-toggle="dropdown" href="#">
+        <i class="fa fa-gear mr-1 gearIcon" th:aria-label="#{aria_label.gear}"></i>
+    </a>
+    <div sec:authorize="isAuthenticated()" class="dropdown-menu dropdown-menu-right border-1 font-weight-semibold dropdown-content wmin-md-225">
+        <div class="dropdown-content-header">
+            <!-- moderator menu strat -->
+            <ul class="no-dot pl-3 m-0">
+
+                <li th:if="${user.equals(author) && !user.isModerator()}"><a class="action-message"
+                                                                             data-action="delete-mymessage"
+                                                                             data-target="#delete-myMessage" data-toggle="modal"
+                                                                             href=""
+                                                                             th:data-message-id="${id_message}"><span
+                        th:text="#{topic_menu_modal.delete_my_contribution}">Delete this message</span></a></li>
+                <li th:if="${user.isModerator()}"><a class="action-message" data-action="delete-message"
+                                                     data-target="#delete-message" data-toggle="modal" href=""
+                                                     th:data-message-id="${id_message}"><span
+                        th:text="#{topic_menu_modal.delete_contribution}">Delete this message</span></a></li>
+                <li th:if="${!user.equals(author) && !user.isModerator()}"><a class="action-message"
+                                                                              data-action="report-message"
+                                                                              data-target="#report-message" data-toggle="modal"
+                                                                              href=""
+                                                                              th:data-message-id="${id_message}"><span
+                        th:text="#{topic_menu_modal.report}">Report</span></a></li>
+
+                <li th:if="${user.isModerator() && !user.equals(author)}"><a class="action-user" data-action="ban-user"
+                                                                             data-target="#ban"
+                                                                             data-toggle="modal" href=""
+                                                                             th:data-message-id="${id_message}"
+                                                                             th:data-username="${author.username}"><span
+                        th:text="#{topic_menu_modal.ban_user}">Ban this person</span></a></li>
+
+                <li th:if="${user.isModerator() || user.isFacilitator()}"><a class="action-message" data-action="change-tag"
+                                                     data-target="#change-tag" data-toggle="modal" href=""
+                                                     th:data-message-id="${id_message}"><span
+                        th:text="#{topic_menu_modal.change_tag}">Change the tag</span></a></li>
+
+                <!-- <li th:if="${!user.equals(author)}"><a href="" data-toggle="modal" data-target="#send-message"><span th:text="#{topic_menu_modal.send_message}">Send a message</span></a></li> -->
+            </ul> <!-- moderator menu end -->
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="choosetag" xmlns:th="http://www.thymeleaf.org">
+    <!--div class="form-check-inline my-2">
+        <input class="form-check-input" th:field="*{postType}" th:id="${id!=null?'idea-checkbox'+id:'idea-checkbox'}"
+               th:value="${T(com.socatel.utils.enums.PostTypeEnum).IDEA}" type="checkbox">
+        <label class="form-check-label font-weight-bold" th:for="${id!=null?'idea-checkbox'+id:'idea-checkbox'}"
+               th:text="#{topic.idea}">Idea</label>
+    </div-->
+    <label th:for="${id!=null?'idea-checkbox'+id:'idea-checkbox'}" th:text="#{topic.step1.choose_tag}">Select your contribution's type</label>:
+    <select th:id="${id!=null?'idea-checkbox'+id:'idea-checkbox'}" class="pointer form-control" required th:field="*{postType}">
+        <option style="display:none" th:text="#{topic.step1.tag}" th:value="${null}">Age range</option>
+        <option th:each="type : ${T(com.socatel.utils.enums.PostTypeEnum).values()}"
+                th:text="#{${type.toString().replaceAll(' ', '_').toLowerCase()}}"
+                th:value="${type}"></option>
+    </select>
+</th:block>
+
+
+<th:block th:fragment="choosefile" xmlns:th="http://www.thymeleaf.org">
+    <div class="my-3">
+        <label th:for="'file' + ${id}" id="attach-a-file" th:text="#{create_topic.file}">Attach a file to your message : </label><br>
+        <div class="custom-file">
+            <input aria-labelledby="attach-a-file" class="custom-file-input pointer" multiple name="file" th:id="'file' + ${id}" type="file"/>
+            <label class="custom-file-label" th:for="'file' + ${id}" th:text="#{create_topic.choose_file}">Choose
+                File</label>
+        </div>
+    </div>
+</th:block>
